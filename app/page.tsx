@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+// import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Upload, Rocket, BookOpen, Send, Check, Menu, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
 
 const carouselSlides = [
   {
@@ -36,7 +37,7 @@ export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [file, setFile] = useState<File | null>(null)
   const [email, setEmail] = useState('')
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
   useEffect(() => {
@@ -68,42 +69,10 @@ export default function Component() {
     console.log('Email:', email)
   }
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-pink-100">
-      <header className="bg-white shadow-md py-4">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <Rocket className="w-8 h-8 text-purple-600 mr-2" />
-            <h1 className="text-2xl font-bold text-gray-800">KindlePDF</h1>
-          </div>
-          <nav className="hidden md:block">
-            <ul className="flex space-x-4">
-              <li><Link href="#features" className="text-gray-600 hover:text-purple-600 transition-colors">Features</Link></li>
-              <li><Link href="#how-it-works" className="text-gray-600 hover:text-purple-600 transition-colors">How It Works</Link></li>
-              <li><Link href="#pricing" className="text-gray-600 hover:text-purple-600 transition-colors">Pricing</Link></li>
-            </ul>
-          </nav>
-          <div className="md:hidden">
-            <Button variant="ghost" size="icon" onClick={toggleMenu}>
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
-        </div>
-        {isMenuOpen && (
-          <nav className="md:hidden mt-4">
-            <ul className="flex flex-col space-y-2">
-              <li><Link href="#features" className="block px-4 py-2 text-gray-600 hover:bg-purple-100 hover:text-purple-600 transition-colors">Features</Link></li>
-              <li><Link href="#how-it-works" className="block px-4 py-2 text-gray-600 hover:bg-purple-100 hover:text-purple-600 transition-colors">How It Works</Link></li>
-              <li><Link href="#pricing" className="block px-4 py-2 text-gray-600 hover:bg-purple-100 hover:text-purple-600 transition-colors">Pricing</Link></li>
-            </ul>
-          </nav>
-        )}
-      </header>
 
+    <div>
       <main className="flex-grow container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Send PDFs to Your Kindle in Seconds</h2>
@@ -178,7 +147,7 @@ export default function Component() {
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
               />
-              <p className="mt-2 text-sm text-gray-500">Don't forget to add our email to your Amazon approved list for Kindle.</p>
+              <p className="mt-2 text-sm text-gray-500">Don&apost forget to add our email to your Amazon approved list for Kindle.</p>
             </div>
             <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
               Send to Kindle
@@ -207,35 +176,6 @@ export default function Component() {
           </div>
         </div>
       </main>
-
-      <footer className="bg-gray-800 text-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-between">
-            <div className="w-full md:w-1/3 mb-6 md:mb-0">
-              <h5 className="text-xl font-semibold mb-4">KindlePDF</h5>
-              <p className="text-gray-400">Transforming the way you read PDFs on your Kindle.</p>
-            </div>
-            <div className="w-full md:w-1/3 mb-6 md:mb-0">
-              <h5 className="text-xl font-semibold mb-4">Quick Links</h5>
-              <ul className="space-y-2">
-                <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
-                <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            <div className="w-full md:w-1/3">
-              <h5 className="text-xl font-semibold mb-4">Legal</h5>
-              <ul className="space-y-2">
-                <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400">&copy; 2023 KindlePDF. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
 
       <Dialog open={showDisclaimer} onOpenChange={setShowDisclaimer}>
         <DialogContent className="sm:max-w-[425px]">
