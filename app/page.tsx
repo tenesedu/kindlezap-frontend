@@ -62,11 +62,34 @@ export default function Component() {
     }
   }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    // Handle form submission here
-    console.log('File:', file)
-    console.log('Email:', email)
+    if (!file || !email) {
+      alert("Please provide both a file and an email.");
+      return;
+    }
+
+    const formData = new FormData()
+    formData.append("email", email)
+    formData.append("file", file)
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Success: ${data.message}`);
+      } else {
+        alert("Failed to upload the file.");
+      }
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred.");
+    }
   }
 
 
@@ -77,7 +100,7 @@ export default function Component() {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Send PDFs to Your Kindle in Seconds</h2>
           <p className="text-xl text-gray-600 mb-8">Transform any document into a Kindle-friendly format with just a few clicks.</p>
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <video
               className="w-full max-w-3xl mx-auto rounded-lg shadow-lg"
               controls
@@ -89,9 +112,9 @@ export default function Component() {
           </div>
           <Button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors">
             Get Started for Free
-          </Button>
+          </Button> */}
         </div>
-
+        {/* 
         <Card className="mb-12 bg-white shadow-xl rounded-2xl overflow-hidden">
           <CardContent className="p-0">
             <div className="relative">
@@ -116,7 +139,7 @@ export default function Component() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         <div className="bg-white shadow-xl rounded-2xl p-8 mb-12">
           <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Upload Your PDF</h3>
@@ -147,7 +170,7 @@ export default function Component() {
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
               />
-              <p className="mt-2 text-sm text-gray-500">Don&apost forget to add our email to your Amazon approved list for Kindle.</p>
+              <p className="mt-2 text-sm text-gray-500">Don't forget to add our email to your Amazon approved list for Kindle.</p>
             </div>
             <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
               Send to Kindle

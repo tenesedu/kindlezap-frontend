@@ -16,8 +16,10 @@ export default function NavigationHeader() {
         <header className="bg-white shadow-md py-4">
             <div className="container mx-auto px-4 flex justify-between items-center">
                 <div className="flex items-center">
-                    <Rocket className="w-8 h-8 text-purple-600 mr-2" />
-                    <h1 className="text-2xl font-bold text-gray-800">KindleZAP</h1>
+                    <Link href="/"><Rocket className="w-8 h-8 text-purple-600 mr-2" /></Link>
+
+                    <Link href="/"><h1 className="text-2xl font-bold text-gray-800">KindleZAP</h1></Link>
+
                 </div>
                 <nav className="hidden md:block">
                     <ul className="flex space-x-4">
