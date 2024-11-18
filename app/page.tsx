@@ -74,7 +74,7 @@ export default function Component() {
     formData.append("file", file)
 
     try {
-      const response = await fetch("https://kindle-backend-oi4k.onrender.com:8000/upload", {
+      const response = await fetch("https://kindle-backend-oi4k.onrender.com/upload", {
         method: "POST",
         body: formData
       });
