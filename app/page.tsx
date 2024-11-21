@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { setServers } from 'dns'
+import Spinner  from '@/components/ui/spinner'
 
 
 const carouselSlides = [
@@ -39,6 +41,9 @@ export default function Component() {
   const [file, setFile] = useState<File | null>(null)
   const [email, setEmail] = useState('')
 
+  const [responseState, setResponseState] = useState<"success" | "error" | "loading" | null>(null);
+  const [message, setMessage] = useState("")
+
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
   useEffect(() => {
@@ -49,13 +54,13 @@ export default function Component() {
     return () => clearTimeout(timer)
   }, [])
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
-  }
+  // const nextSlide = () => {
+  //   setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
+  // }
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
-  }
+  // const prevSlide = () => {
+  //   setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  // }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -65,6 +70,10 @@ export default function Component() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
+    setResponseState("loading")
+    setMessage("Converting and sending to kindle...")
+
     if (!file || !email) {
       alert("Please provide both a file and an email.");
       return;
@@ -82,16 +91,21 @@ export default function Component() {
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Success: ${data.message}`);
+        setResponseState("success")
+        setMessage("Book sent successfully!")
       } else {
-        alert("Failed to upload the file.");
+        setResponseState("error")
+        setMessage("Failed to convert your pdf")
       }
 
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred.");
+      setResponseState("error")
+      setMessage("Failed to convert your pdf")
     }
   }
+
+
 
 
   return (
@@ -146,6 +160,9 @@ export default function Component() {
           <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Upload Your PDF</h3>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
+            {responseState &&(
+              <Spinner responseState={responseState} message={message}/>
+            )}
               <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-64 border-2 border-purple-300 border-dashed rounded-lg cursor-pointer bg-purple-50 hover:bg-purple-100 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Upload className="w-12 h-12 mb-4 text-purple-500" />
@@ -162,6 +179,7 @@ export default function Component() {
               <label htmlFor="kindle-email" className="block text-sm font-medium text-gray-700 mb-2">
                 Your Kindle Email Address
               </label>
+              
               <Input
                 type="email"
                 id="kindle-email"
@@ -176,8 +194,11 @@ export default function Component() {
             <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
               Send to Kindle
             </Button>
+            
           </form>
         </div>
+
+        
 
         <div className="text-center">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Choose KindlePDF?</h3>
