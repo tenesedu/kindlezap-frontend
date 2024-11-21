@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { setServers } from 'dns'
 import Spinner  from '@/components/ui/spinner'
+import KindleSimulator from '@/components/ui/kindleSimulator'
 
 
 const carouselSlides = [
@@ -44,8 +45,11 @@ export default function Component() {
   const [responseState, setResponseState] = useState<"success" | "error" | "loading" | null>(null);
   const [message, setMessage] = useState("")
 
+  const [htmlContent, setHtmlContent] = useState<string | null>(null);
+
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowDisclaimer(true)
@@ -74,6 +78,7 @@ export default function Component() {
     setResponseState("loading")
     setMessage("Converting and sending to kindle...")
 
+
     if (!file || !email) {
       alert("Please provide both a file and an email.");
       return;
@@ -93,18 +98,71 @@ export default function Component() {
         const data = await response.json();
         setResponseState("success")
         setMessage("Book sent successfully!")
-      } else {
+
+        setTimeout(() => {
+          setResponseState(null)
+        }, 3000)
+      }  else if (response.status === 500) {
         setResponseState("error")
         setMessage("Failed to convert your pdf")
+        setTimeout(() => {
+          setResponseState(null)
+        }, 3000)
+      
+      }else {
+        
       }
 
     } catch (error) {
       console.error("Error:", error);
       setResponseState("error")
-      setMessage("Failed to convert your pdf")
+      setMessage("Network error or server is down.")
+
+      setTimeout(() => {
+        setResponseState(null)
+      }, 3000)
+   
     }
   }
 
+  const handleConvert = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const formData = new FormData()
+
+    if (!file) {
+      alert("Please provide a file.");
+      return;
+    }
+
+    formData.append("file", file)
+
+    try {
+      const response = await fetch("http://localhost:8000/convert", {
+        method: "POST",
+        body: formData
+      });
+  
+      if(response.ok){
+        const data = await response.json();
+        console.log(data.html)
+        setHtmlContent(data.html);
+        alert("Conversion successfully!")
+      }else{
+        alert("Something goes wrong.")
+      }
+    }catch(error){
+      console.error("Error:", error);
+      alert("error")
+    }
+
+
+  }
+
+  const handlePreview = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+  }
 
 
 
@@ -191,9 +249,26 @@ export default function Component() {
               />
               <p className="mt-2 text-sm text-gray-500">Don't forget to add our email to your Amazon approved list for Kindle.</p>
             </div>
-            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
+            <Button value="convert" onClick={handleConvert} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
+              Convert
+            </Button>
+            <Button value="preview" onClick={handlePreview} className=" ml-3 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
+              Preview
+            </Button>
+            <Button value="send" type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors">
               Send to Kindle
             </Button>
+            <div>
+            <h1>Kindle Simulator</h1>
+            {htmlContent ? (
+              <KindleSimulator htmlContent={htmlContent} />
+            ) : (
+              <p>Loading content...</p>
+            )}
+          </div>
+      
+
+        
             
           </form>
         </div>
