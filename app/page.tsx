@@ -29,6 +29,8 @@ import Spinner from "@/components/ui/spinner";
 import KindleSimulator from "@/components/ui/kindleSimulator";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import MetadataForm from "@/components/form/metadata";
+import { Metadata } from "@/app/interfaces";
 
 const carouselSlides = [
   {
@@ -115,12 +117,12 @@ export default function Component() {
         if (response.ok) {
           const data = await response.json();
 
-          const truncatedSummary =
-            data.summary.summary.length > 500
-              ? data.summary.summary.substring(0, 500) + "..."
-              : data.summary.summary;
+          // const truncatedSummary =
+          //   data.summary.summary.length > 500
+          //     ? data.summary.summary.substring(0, 500) + "..."
+          //     : data.summary.summary;
 
-          setShowSummaryContent(truncatedSummary);
+          setShowSummaryContent(data.summary.summary);
           setSummaryContent(true);
         } else {
         }
@@ -219,6 +221,12 @@ export default function Component() {
       setShowPreview(true);
     } else {
       alert("Please convert a file to kindle format to view preview content.");
+    }
+  };
+
+  const handleMetadataChange = (metadata: Metadata) => {
+    if (metadata) {
+      console.log(metadata);
     }
   };
 
@@ -370,9 +378,9 @@ export default function Component() {
             </form>
           </div>
           <div className="bg-white shadow-xl rounded-2xl p-8 mb-12 w-full md:w-1/2 h-auto">
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
               <div className="flex justify-between">
-                <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                <h4 className="text-xl font-semibold text-gray-800">
                   Kindle Metadata
                 </h4>
 
@@ -381,31 +389,39 @@ export default function Component() {
                 )}
               </div>
               <p className="text-sm text-gray-500 mb-4">
-                Ensure you add our email to your approved list in Amazon Kindle
-                settings. This is necessary to send the file to your Kindle
-                device.
+                <MetadataForm onProcessMetadata={handleMetadataChange} />
               </p>
 
               <div className="">
                 <h4 className="text-xl font-semibold text-gray-800 mb-4">
                   Summary Content
                 </h4>
-                {/* {summaryContent && <p>{showSummaryContent}</p>} */}
-                <p className="2xl:text-base xl:text-sm text-xs italic">
-                  Lorem Ipsum es simplemente el texto de relleno de las
-                  imprentas y archivos de texto. Lorem Ipsum ha sido el texto de
-                  relleno estándar de las industrias desde el año 1500, cuando
-                  un impresor (N. del T. persona que se dedica a la imprenta)
-                  desconocido usó una galería de textos y los mezcló de tal
-                  manera que logró hacer un libro de textos especimen. No sólo
-                  sobrevivió 500 años, sino que tambien ingresó como texto de
-                  relleno en documentos electrónicos, quedando esencialmente
-                  igual al original. Fue popularizado en los 60s con la creación
-                  de las hojas "Letraset", las cuales contenian pasajes de Lorem
-                  Ipsum, y más recientemente con software de autoedición, como
-                  por ejemplo Aldus PageMaker, el cual incluye versiones de
-                  Lorem Ipsum.
-                </p>
+                {summaryContent ? (
+                  <div className="max-h-50 overflow-y-scroll p-4 border border-gray-300 rounded">
+                    <p className="2xl:text-base xl:text-sm text-xs italic">
+                      {showSummaryContent}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="max-h-50 overflow-y-scroll p-4 border border-gray-300 rounded">
+                    <p className="2xl:text-base xl:text-sm text-xs italic">
+                      Lorem Ipsum es simplemente el texto de relleno de las
+                      imprentas y archivos de texto. Lorem Ipsum ha sido el
+                      texto de relleno estándar de las industrias desde el año
+                      1500, cuando un impresor (N. del T. persona que se dedica
+                      a la imprenta) desconocido usó una galería de textos y los
+                      mezcló de tal manera que logró hacer un libro de textos
+                      especimen. No sólo sobrevivió 500 años, sino que tambien
+                      ingresó como texto de relleno en documentos electrónicos,
+                      quedando esencialmente igual al original. Fue popularizado
+                      en los 60s con la creación de las hojas "Letraset", las
+                      cuales contenian pasajes de Lorem Ipsum, y más
+                      recientemente con software de autoedición, como por
+                      ejemplo Aldus PageMaker, el cual incluye versiones de
+                      Lorem Ipsum.
+                    </p>
+                  </div>
+                )}
               </div>
               {/* <div className="mt-4">
                 <KindleSimulator htmlContent={htmlContent || ""} />
