@@ -109,10 +109,13 @@ export default function Component() {
 
       // OpenAI API Call
       try {
-        const response = await fetch("http://localhost:8000/summarize", {
-          method: "POST",
-          body: formData,
-        });
+        const response = await fetch(
+          "https://kindle-backend-latest.onrender.com/summarize",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -195,10 +198,13 @@ export default function Component() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/convert", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://kindle-backend-latest.onrender.com/convert",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
