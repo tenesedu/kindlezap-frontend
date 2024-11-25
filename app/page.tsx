@@ -409,7 +409,7 @@ export default function Component() {
                     </p>
                   </div>
                 ) : (
-                  <div className="max-h-50 overflow-y-scroll p-4 border border-gray-300 rounded">
+                  <div className="max-h-48 overflow-y-scroll p-4 border border-gray-300 rounded">
                     <p className="2xl:text-base xl:text-sm text-xs italic">
                       Lorem Ipsum es simplemente el texto de relleno de las
                       imprentas y archivos de texto. Lorem Ipsum ha sido el
