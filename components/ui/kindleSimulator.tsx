@@ -6,8 +6,8 @@ interface KindleSimulatorProps {
   
   const KindleSimulator: React.FC<KindleSimulatorProps> = ({ htmlContent }) => {
     return (
-      <div className="container d-flex justify-content-center align-items-center py-5">
-        <div className="kindle">
+      <div className="container d-flex justify-content-center align-items-center py-5 text-center">
+        <div className="kindle ">
           <div className="screen">
             {/* Renderizar el contenido HTML con scroll */}
             <div

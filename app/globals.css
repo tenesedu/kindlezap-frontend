@@ -78,8 +78,8 @@ body {
 }
 
 .kindle {
-  width: 500px;
-  height: 700px;
+  width: 400px;
+  height: 600px;
   background: #222;
   border: 12px ridge #333;
   border-radius: 30px;
@@ -91,8 +91,8 @@ body {
 }
 
 .screen {
-  width: 450px;
-  height: 600px;
+  width: 350px;
+  height: 500px;
   background: #fff;
   border: 5px inset #222;
   border-radius: 5px;
@@ -119,10 +119,69 @@ body {
 }
 
 #book-content p {
-  margin: 0 0 1em; /* Añade espacio entre párrafos */
+  margin: 0 0 1em; 
 }
 
 #book-content br {
   display: block;
-  margin-bottom: 0.5em; /* Espaciado entre líneas si usas <br> */
+  margin-bottom: 0.5em; 
+}
+
+@media (max-width: 768px) {
+  .kindle {
+    width: 300px; 
+    height: 420px; 
+    border-width: 8px; 
+    border-radius: 20px; 
+    padding: 5px; 
+  }
+
+  .screen {
+    width: 270px; 
+    height: 360px; 
+    border-width: 3px; 
+    border-radius: 3px; 
+    padding: 5px; 
+  }
+
+  #book-content {
+    overflow-y: auto; /* Permitir desplazamiento vertical */
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    font-size: 10px; /* Ajusta el tamaño de la fuente aquí */
+    line-height: 1.4; /* Ajusta el espaciado entre líneas */
+    color: #333; /* Color del texto */
+    font-family: "Georgia", serif; /* Simula una fuente típica de libros */
+  }
+}
+
+/* Responsividad para pantallas extra pequeñas */
+@media (max-width: 480px) {
+  .kindle {
+    width: 200px;
+    height: 280px;
+    border-width: 6px;
+    border-radius: 15px;
+    padding: 3px;
+  }
+
+  .screen {
+    width: 180px;
+    height: 240px;
+    border-width: 2px;
+    border-radius: 2px;
+    padding: 3px;
+  }
+
+  #book-content {
+    overflow-y: auto; /* Permitir desplazamiento vertical */
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    font-size: 8px; /* Ajusta el tamaño de la fuente aquí */
+    line-height: 1.4; /* Ajusta el espaciado entre líneas */
+    color: #333; /* Color del texto */
+    font-family: "Georgia", serif; /* Simula una fuente típica de libros */
+  }
 }

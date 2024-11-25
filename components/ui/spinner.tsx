@@ -14,7 +14,7 @@ export default function Spinner({responseState, message}: SpinnerResponseProps){
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
         <div
-          className="bg-white p-4  rounded-lg shadow-lg flex flex-col items-center min-w-[300px] min-h-[150px] justify-center"
+          className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center min-w-[300px] min-h-[150px] justify-center"
         >
           <div className="flex justify-center items-center h-20">
               {responseState === "loading" && (
