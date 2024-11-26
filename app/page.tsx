@@ -78,6 +78,8 @@ export default function Component() {
     null
   );
 
+  const [metadataForm, setMetadataForm] = useState<Metadata>();
+
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   useEffect(() => {
@@ -87,14 +89,6 @@ export default function Component() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  // const nextSlide = () => {
-  //   setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
-  // }
-
-  // const prevSlide = () => {
-  //   setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
-  // }
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -109,13 +103,10 @@ export default function Component() {
 
       // OpenAI API Call
       try {
-        const response = await fetch(
-          "https://kindle-backend-latest.onrender.com/summarize",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const response = await fetch("http://localhost:8000/summarize", {
+          method: "POST",
+          body: formData,
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -133,54 +124,104 @@ export default function Component() {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // const handleSend = async (event: React.FormEvent) => {
+  //   event.preventDefault();
 
-    setResponseState("loading");
-    setMessage("Converting and sending to kindle...");
+  //   setResponseState("loading");
+  //   setMessage("Converting and sending to kindle...");
+
+  //   if (!file || !email) {
+  //     alert("Please provide both a file and an email.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("email", email);
+  //   formData.append("file", file);
+
+  //   try {
+  //     const response = await fetch(
+  //       "https://kindle-backend-latest.onrender.com/send",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setResponseState("success");
+  //       setMessage("Book sent successfully!");
+
+  //       setTimeout(() => {
+  //         setResponseState(null);
+  //       }, 3000);
+  //     } else if (response.status === 500) {
+  //       setResponseState("error");
+  //       setMessage("Failed to convert your pdf");
+  //       setTimeout(() => {
+  //         setResponseState(null);
+  //       }, 3000);
+  //     } else {
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     setResponseState("error");
+  //     setMessage("Network error or server is down.");
+
+  //     setTimeout(() => {
+  //       setResponseState(null);
+  //     }, 3000);
+  //   }
+  // };
+
+  const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
 
     if (!file || !email) {
       alert("Please provide both a file and an email.");
       return;
     }
 
+    setResponseState("loading");
+    setMessage("Sending to kindle...");
+
     const formData = new FormData();
     formData.append("email", email);
     formData.append("file", file);
+    formData.append("metadata", JSON.stringify(metadataForm));
 
-    try {
-      const response = await fetch(
-        "https://kindle-backend-latest.onrender.com/upload",
-        {
+    if (htmlContent) {
+      try {
+        const response = await fetch("http://localhost:8000/send", {
           method: "POST",
           body: formData,
+        });
+
+        if (response.ok) {
+          setResponseState("success");
+          setMessage("Book sent successfully!");
+
+          setTimeout(() => {
+            setResponseState(null);
+          }, 3000);
+        } else if (response.status === 500) {
+          setResponseState("error");
+          setMessage("Failed to send your book");
+          setTimeout(() => {
+            setResponseState(null);
+          }, 3000);
+        } else {
         }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setResponseState("success");
-        setMessage("Book sent successfully!");
-
-        setTimeout(() => {
-          setResponseState(null);
-        }, 3000);
-      } else if (response.status === 500) {
+      } catch (error) {
+        console.error("Error:", error);
         setResponseState("error");
-        setMessage("Failed to convert your pdf");
+        setMessage("Network error or server is down.");
+
         setTimeout(() => {
           setResponseState(null);
         }, 3000);
-      } else {
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setResponseState("error");
-      setMessage("Network error or server is down.");
-
-      setTimeout(() => {
-        setResponseState(null);
-      }, 3000);
     }
   };
 
@@ -190,6 +231,9 @@ export default function Component() {
     setHtmlLoading(true);
     const formData = new FormData();
 
+    setResponseState("loading");
+    setMessage("Converting to kindle...");
+
     if (!file) {
       alert("Please provide a file.");
       return;
@@ -198,20 +242,22 @@ export default function Component() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(
-        "https://kindle-backend-latest.onrender.com/convert",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("http://localhost:8000/convert", {
+        method: "POST",
+        body: formData,
+      });
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.html);
+
         setHtmlContent(data.html);
         setHtmlLoading(false);
-        alert("Conversion successfully!");
+        setResponseState("success");
+        setMessage("Book converted successfully!");
+
+        setTimeout(() => {
+          setResponseState(null);
+        }, 3000);
       } else {
         alert("Something goes wrong.");
       }
@@ -233,6 +279,7 @@ export default function Component() {
   const handleMetadataChange = (metadata: Metadata) => {
     if (metadata) {
       console.log(metadata);
+      setMetadataForm(metadata);
     }
   };
 
@@ -293,7 +340,7 @@ export default function Component() {
             <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
               Upload Your PDF
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form className="space-y-6">
               <div>
                 {responseState && (
                   <Spinner responseState={responseState} message={message} />
@@ -375,8 +422,12 @@ export default function Component() {
                 {/* Botón destacado en una fila aparte */}
                 <Button
                   value="send"
-                  type="submit"
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-colors"
+                  onClick={handleSend}
+                  className={`text-white font-bold hover:bg-purple-700 py-3 px-6 rounded-md transition-colors w-full ${
+                    htmlContent
+                      ? "bg-purple-600 hover:bg-purple-700 cursor-pointer"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
                 >
                   Send to Kindle
                 </Button>
@@ -394,9 +445,9 @@ export default function Component() {
                   <KindleSimulator htmlContent={htmlContent} />
                 )}
               </div>
-              <p className="text-sm text-gray-500 mb-4">
+              <div className="text-sm text-gray-500 mb-4">
                 <MetadataForm onProcessMetadata={handleMetadataChange} />
-              </p>
+              </div>
 
               <div className="">
                 <h4 className="text-xl font-semibold text-gray-800 mb-4">

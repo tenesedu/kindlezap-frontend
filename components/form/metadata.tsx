@@ -75,7 +75,7 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
               Genre:
             </label>
             <input
-              value={metadata.author}
+              value={metadata.genre}
               className="block w-full border border-gray-300 rounded-md p-2"
               type="text"
               id="genre"
