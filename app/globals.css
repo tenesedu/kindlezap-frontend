@@ -119,29 +119,29 @@ body {
 }
 
 #book-content p {
-  margin: 0 0 1em; 
+  margin: 0 0 1em;
 }
 
 #book-content br {
   display: block;
-  margin-bottom: 0.5em; 
+  margin-bottom: 0.5em;
 }
 
 @media (max-width: 768px) {
   .kindle {
-    width: 300px; 
-    height: 420px; 
-    border-width: 8px; 
-    border-radius: 20px; 
-    padding: 5px; 
+    width: 300px;
+    height: 420px;
+    border-width: 8px;
+    border-radius: 20px;
+    padding: 5px;
   }
 
   .screen {
-    width: 270px; 
-    height: 360px; 
-    border-width: 3px; 
-    border-radius: 3px; 
-    padding: 5px; 
+    width: 270px;
+    height: 360px;
+    border-width: 3px;
+    border-radius: 3px;
+    padding: 5px;
   }
 
   #book-content {

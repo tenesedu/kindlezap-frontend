@@ -97,7 +97,6 @@ export default function Component() {
       const uploadedFile = event.target.files[0];
       setFile(uploadedFile);
 
-      console.log("Hello");
       const formData = new FormData();
       formData.append("file", uploadedFile);
 
@@ -118,62 +117,14 @@ export default function Component() {
 
           setShowSummaryContent(data.summary.summary);
           setSummaryContent(true);
+          console.log(data);
+          setHtmlContent(data.html);
+          setHtmlLoading(false);
         } else {
         }
       } catch (error) {}
     }
   };
-
-  // const handleSend = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-
-  //   setResponseState("loading");
-  //   setMessage("Converting and sending to kindle...");
-
-  //   if (!file || !email) {
-  //     alert("Please provide both a file and an email.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("email", email);
-  //   formData.append("file", file);
-
-  //   try {
-  //     const response = await fetch(
-  //       "https://kindle-backend-latest.onrender.com/send",
-  //       {
-  //         method: "POST",
-  //         body: formData,
-  //       }
-  //     );
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setResponseState("success");
-  //       setMessage("Book sent successfully!");
-
-  //       setTimeout(() => {
-  //         setResponseState(null);
-  //       }, 3000);
-  //     } else if (response.status === 500) {
-  //       setResponseState("error");
-  //       setMessage("Failed to convert your pdf");
-  //       setTimeout(() => {
-  //         setResponseState(null);
-  //       }, 3000);
-  //     } else {
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     setResponseState("error");
-  //     setMessage("Network error or server is down.");
-
-  //     setTimeout(() => {
-  //       setResponseState(null);
-  //     }, 3000);
-  //   }
-  // };
 
   const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -225,47 +176,47 @@ export default function Component() {
     }
   };
 
-  const handleConvert = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // const handleConvert = async (event: React.FormEvent) => {
+  //   event.preventDefault();
 
-    setHtmlLoading(true);
-    const formData = new FormData();
+  //   setHtmlLoading(true);
+  //   const formData = new FormData();
 
-    setResponseState("loading");
-    setMessage("Converting to kindle...");
+  //   setResponseState("loading");
+  //   setMessage("Converting to kindle...");
 
-    if (!file) {
-      alert("Please provide a file.");
-      return;
-    }
+  //   if (!file) {
+  //     alert("Please provide a file.");
+  //     return;
+  //   }
 
-    formData.append("file", file);
+  //   formData.append("file", file);
 
-    try {
-      const response = await fetch("http://localhost:8000/convert", {
-        method: "POST",
-        body: formData,
-      });
+  //   try {
+  //     const response = await fetch("http://localhost:8000/convert", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
+  //     if (response.ok) {
+  //       const data = await response.json();
 
-        setHtmlContent(data.html);
-        setHtmlLoading(false);
-        setResponseState("success");
-        setMessage("Book converted successfully!");
+  //       setHtmlContent(data.html);
+  //       setHtmlLoading(false);
+  //       setResponseState("success");
+  //       setMessage("Book converted successfully!");
 
-        setTimeout(() => {
-          setResponseState(null);
-        }, 3000);
-      } else {
-        alert("Something goes wrong.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("error");
-    }
-  };
+  //       setTimeout(() => {
+  //         setResponseState(null);
+  //       }, 3000);
+  //     } else {
+  //       alert("Something goes wrong.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("error");
+  //   }
+  // };
 
   const handlePreview = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -395,17 +346,6 @@ export default function Component() {
               <div className="flex flex-col space-y-4">
                 {/* Botones en una sola fila */}
                 <div className="flex space-x-4">
-                  <Button
-                    value="convert"
-                    onClick={handleConvert}
-                    className={`text-white font-bold py-3 px-6 rounded-md transition-colors w-1/2 ${
-                      file
-                        ? "bg-gray-600 hover:bg-gray-700 cursor-pointer"
-                        : "bg-gray-300 cursor-not-allowed"
-                    }`}
-                  >
-                    Convert
-                  </Button>
                   <Button
                     value="preview"
                     onClick={handlePreview}
