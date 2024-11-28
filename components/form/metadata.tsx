@@ -10,10 +10,12 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
     title: "",
     author: "",
     genre: "",
-    language: "",
+    language: "en",
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     event.preventDefault();
 
     const { id, value } = event.target;
@@ -44,7 +46,7 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
             </label>
             <input
               value={metadata.title}
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block w-full h-[42px] border border-gray-300 rounded-md p-2"
               type="text"
               id="title"
               onChange={handleChange}
@@ -59,7 +61,7 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
             </label>
             <input
               value={metadata.author}
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block w-full h-[42px] border border-gray-300 rounded-md p-2"
               type="text"
               id="author"
               onChange={handleChange}
@@ -76,7 +78,7 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
             </label>
             <input
               value={metadata.genre}
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block w-full h-[42px] border border-gray-300 rounded-md p-2"
               type="text"
               id="genre"
               onChange={handleChange}
@@ -89,15 +91,15 @@ const MetadataForm = ({ onProcessMetadata }: MetadataFormProps) => {
             >
               Language:
             </label>
-            <input
+            <select
               value={metadata.language}
-              className="block w-full border border-gray-300 rounded-md p-2"
-              type="text"
+              className="block w-full h-[42px] border border-gray-300 rounded-md p-2 mb-1 "
               id="language"
-              onChange={(e) =>
-                setMetadata({ ...metadata, language: e.target.value })
-              }
-            />
+              onChange={handleChange}
+            >
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+            </select>
           </div>
         </div>
       </form>

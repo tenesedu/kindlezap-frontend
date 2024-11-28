@@ -61,7 +61,7 @@ const carouselSlides = [
 
 export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [email, setEmail] = useState("");
 
   const [responseState, setResponseState] = useState<
@@ -73,13 +73,15 @@ export default function Component() {
   const [showPreview, setShowPreview] = useState(false);
 
   const [summaryContent, setSummaryContent] = useState(false);
-  const [showSummaryContent, setShowSummaryContent] = useState<string | null>(
-    null
-  );
+  const [showSummaryContent, setShowSummaryContent] = useState<
+    Array<{ summary: string }>
+  >([]);
 
   const [metadataForm, setMetadataForm] = useState<Metadata>();
 
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+
+  const [filesConverted, setFilesConverted] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,40 +91,51 @@ export default function Component() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      const uploadedFile = event.target.files[0];
-      setFile(uploadedFile);
+      const fileArray = Array.from(event.target.files);
+      setFiles([...files, ...fileArray]);
+    }
+  };
 
-      const formData = new FormData();
-      formData.append("file", uploadedFile);
+  const handleConvert = async () => {
+    if (!files.length) {
+      alert("Please select files to convert first.");
+      return;
+    }
 
-      // OpenAI API Call
-      try {
-        const response = await fetch("http://localhost:8000/summarize", {
-          method: "POST",
-          body: formData,
-        });
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("file", file);
+    }
 
-        if (response.ok) {
-          const data = await response.json();
+    try {
+      const response = await fetch("http://localhost:8000/summarize", {
+        method: "POST",
+        body: formData,
+      });
 
-          setShowSummaryContent(data.summary.summary);
-          setSummaryContent(true);
-          console.log(data.html.substring(150000, 155000));
-          setHtmlContent(data.html);
-        } else {
-        }
-      } catch (error) {}
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.summary.summary);
+
+        setShowSummaryContent(data.summary.summary);
+        setHtmlContent(data.html);
+        setFilesConverted(true);
+        setSummaryContent(true);
+      } else {
+        alert("Error converting files. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error converting files. Please try again.");
     }
   };
 
   const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    if (!file || !email) {
+    if (!files || !email) {
       alert("Please provide both a file and an email.");
       return;
     }
@@ -132,7 +145,7 @@ export default function Component() {
 
     const formData = new FormData();
     formData.append("email", email);
-    formData.append("file", file);
+    // formData.append("file", file);
     formData.append("metadata", JSON.stringify(metadataForm));
 
     if (htmlContent) {
@@ -200,47 +213,7 @@ export default function Component() {
             Transform any document into a Kindle-friendly format with just a few
             clicks.
           </p>
-          {/* <div className="mb-8">
-            <video
-              className="w-full max-w-3xl mx-auto rounded-lg shadow-lg"
-              controls
-              poster="/placeholder.svg?height=400&width=600"
-            >
-              <source src="/path-to-your-video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors">
-            Get Started for Free
-          </Button> */}
         </div>
-        {/* 
-        <Card className="mb-12 bg-white shadow-xl rounded-2xl overflow-hidden">
-          <CardContent className="p-0">
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-                  {carouselSlides.map((slide, index) => (
-                    <div key={index} className="w-full flex-shrink-0 p-8">
-                      <div className="flex flex-col items-center text-center">
-                        {slide.icon}
-                        <h3 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">{slide.title}</h3>
-                        <p className="text-gray-600">{slide.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <Button variant="outline" size="icon" className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white rounded-full shadow-md" onClick={prevSlide}>
-                <ChevronLeft className="h-6 w-6 text-gray-800" />
-              </Button>
-              <Button variant="outline" size="icon" className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white rounded-full shadow-md" onClick={nextSlide}>
-                <ChevronRight className="h-6 w-6 text-gray-800" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card> */}
-
         <div className="flex items-stretch space-x-8">
           <div className="bg-white shadow-xl rounded-2xl p-8 mb-12 w-1/2 h-auto">
             <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
@@ -268,13 +241,45 @@ export default function Component() {
                     type="file"
                     className="hidden"
                     onChange={handleFileChange}
+                    multiple
                     accept=".pdf"
                   />
                 </label>
-                {file && (
-                  <p className="mt-2 text-sm text-gray-500">
-                    Selected file: {file.name}
-                  </p>
+                {files.length > 0 && (
+                  <div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Selected files:
+                    </p>
+                    <ul className="mt-1 text-sm text-purple-500 list-disc list-inside">
+                      {files.map((f, index) => (
+                        <li key={f.name} className="flex items-center">
+                          <span>{f.name}</span>
+                          <button
+                            onClick={() => {
+                              const newFiles = files.filter(
+                                (_, i) => i !== index
+                              );
+                              setFiles(newFiles);
+                            }}
+                            className="ml-2 text-gray-500 hover:text-gray-700"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
               <div>
@@ -298,35 +303,39 @@ export default function Component() {
                   Kindle.
                 </p>
               </div>
-              <div className="flex flex-col space-y-4">
-                {/* Botones en una sola fila */}
-                <div className="flex space-x-4">
-                  <Button
-                    value="preview"
-                    onClick={handlePreview}
-                    className={`text-white font-bold py-3 px-6 rounded-md transition-colors w-1/2 ${
-                      htmlContent
-                        ? "bg-gray-600 hover:bg-gray-700 cursor-pointer"
-                        : "bg-gray-300 cursor-not-allowed"
-                    }`}
-                  >
-                    Show Preview
-                  </Button>
-                </div>
 
-                {/* Botón destacado en una fila aparte */}
+              <div className="flex gap-4">
                 <Button
-                  value="send"
-                  onClick={handleSend}
-                  className={`text-white font-bold hover:bg-purple-700 py-3 px-6 rounded-md transition-colors w-full ${
+                  onClick={handleConvert}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-md transition-colors w-1/2"
+                >
+                  Convert Files
+                </Button>
+
+                <Button
+                  value="preview"
+                  onClick={handlePreview}
+                  className={`text-white font-bold py-3 px-6 rounded-md transition-colors w-1/2 ${
                     htmlContent
-                      ? "bg-purple-600 hover:bg-purple-700 cursor-pointer"
+                      ? "bg-gray-600 hover:bg-gray-700 cursor-pointer"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                 >
-                  Send to Kindle
+                  Show Preview
                 </Button>
               </div>
+              <Button
+                value="send"
+                onClick={handleSend}
+                className={`text-white font-bold hover:bg-purple-700 py-3 px-6 rounded-md transition-colors w-full ${
+                  filesConverted
+                    ? "bg-purple-600 hover:bg-purple-700 cursor-pointer"
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
+                disabled={!filesConverted}
+              >
+                Send to Kindle
+              </Button>
             </form>
           </div>
           <div className="bg-white shadow-xl rounded-2xl p-8 mb-12 w-full md:w-1/2 h-auto">
@@ -352,54 +361,47 @@ export default function Component() {
                   Summary Content
                 </h4>
                 {summaryContent ? (
-                  <div className="max-h-48 overflow-y-scroll p-4 border border-gray-300 rounded">
-                    <p className="2xl:text-base xl:text-sm text-xs italic">
-                      {showSummaryContent}
-                    </p>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h5 className="font-medium text-gray-700">
+                        File {currentSlide + 1} of {files.length}
+                      </h5>
+                      <div className="space-x-2">
+                        <Button
+                          onClick={() =>
+                            setCurrentSlide((prev) => Math.max(0, prev - 1))
+                          }
+                          disabled={currentSlide === 0}
+                          className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            setCurrentSlide((prev) =>
+                              Math.min(files.length - 1, prev + 1)
+                            )
+                          }
+                          disabled={currentSlide === files.length - 1}
+                          className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="max-h-48 overflow-y-scroll p-4 border border-gray-300 rounded">
+                      <p className="text-sm font-medium text-gray-600 mb-2">
+                        {files[currentSlide]?.name}
+                      </p>
+                      <p className="2xl:text-base xl:text-sm text-xs italic">
+                        {showSummaryContent[currentSlide]?.summary}
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <div className="max-h-48 overflow-y-scroll p-4 border border-gray-300 rounded">
-                    <p className="2xl:text-base xl:text-sm text-xs italic">
-                      Lorem Ipsum es simplemente el texto de relleno de las
-                      imprentas y archivos de texto. Lorem Ipsum ha sido el
-                      texto de relleno estándar de las industrias desde el año
-                      1500, cuando un impresor (N. del T. persona que se dedica
-                      a la imprenta) desconocido usó una galería de textos y los
-                      mezcló de tal manera que logró hacer un libro de textos
-                      especimen. No sólo sobrevivió 500 años, sino que tambien
-                      ingresó como texto de relleno en documentos electrónicos,
-                      quedando esencialmente igual al original. Fue popularizado
-                      en los 60s con la creación de las hojas "Letraset", las
-                      cuales contenian pasajes de Lorem Ipsum, y más
-                      recientemente con software de autoedición, como por
-                      ejemplo Aldus PageMaker, el cual incluye versiones de
-                      Lorem Ipsum. Lorem Ipsum es simplemente el texto de
-                      relleno de las imprentas y archivos de texto. Lorem Ipsum
-                      ha sido el texto de relleno estándar de las industrias
-                      desde el año 1500, cuando un impresor (N. del T. persona
-                      que se dedica a la imprenta) desconocido usó una galería
-                      de textos y los mezcló de tal manera que logró hacer un
-                      libro de textos especimen. No sólo sobrevivió 500 años,
-                      sino que tambien ingresó como texto de relleno en
-                      documentos electrónicos, quedando esencialmente igual al
-                      original. Fue popularizado en los 60s con la creación de
-                      las hojas "Letraset", las cuales contenian pasajes de
-                      Lorem Ipsum, y más recientemente con software de
-                      autoedición, como por ejemplo Aldus PageMaker, el cual
-                      incluye versiones de Lorem Ipsum. Lorem Ipsum es
-                      simplemente el texto de relleno de las imprentas y
-                      archivos de texto. Lorem Ipsum ha sido el texto de relleno
-                      estándar de las industrias desde el año 1500, cuando un
-                      impresor (N. del T. persona que se dedica a la imprenta)
-                      desconocido usó una galería de textos y los mezcló de tal
-                      manera que logró hacer un libro de textos especimen. No
-                      sólo sobrevivió 500 años, sino que tambien ingresó como
-                      texto de relleno en documentos electrónicos, quedando
-                      esencialmente igual al original. Fue popularizado en los
-                      60s con la creación de las hojas "Letraset", las cuales
-                      contenian pasajes de Lorem Ipsum, y más recientemente con
-                      software de autoedición, como por ejemplo Aldus PageMaker,
-                      el cual incluye versiones de Lorem Ipsum.
+                    <p className="2xl:text-base xl:text-sm text-xs italic text-gray-500">
+                      Convert your files to see their summaries here.
                     </p>
                   </div>
                 )}
