@@ -71,7 +71,6 @@ export default function Component() {
 
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  const [htmlLoading, setHtmlLoading] = useState(false);
 
   const [summaryContent, setSummaryContent] = useState(false);
   const [showSummaryContent, setShowSummaryContent] = useState<string | null>(
@@ -110,16 +109,10 @@ export default function Component() {
         if (response.ok) {
           const data = await response.json();
 
-          // const truncatedSummary =
-          //   data.summary.summary.length > 500
-          //     ? data.summary.summary.substring(0, 500) + "..."
-          //     : data.summary.summary;
-
           setShowSummaryContent(data.summary.summary);
           setSummaryContent(true);
-          console.log(data);
+          console.log(data.html.substring(150000, 155000));
           setHtmlContent(data.html);
-          setHtmlLoading(false);
         } else {
         }
       } catch (error) {}
@@ -176,48 +169,6 @@ export default function Component() {
     }
   };
 
-  // const handleConvert = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-
-  //   setHtmlLoading(true);
-  //   const formData = new FormData();
-
-  //   setResponseState("loading");
-  //   setMessage("Converting to kindle...");
-
-  //   if (!file) {
-  //     alert("Please provide a file.");
-  //     return;
-  //   }
-
-  //   formData.append("file", file);
-
-  //   try {
-  //     const response = await fetch("http://localhost:8000/convert", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-
-  //       setHtmlContent(data.html);
-  //       setHtmlLoading(false);
-  //       setResponseState("success");
-  //       setMessage("Book converted successfully!");
-
-  //       setTimeout(() => {
-  //         setResponseState(null);
-  //       }, 3000);
-  //     } else {
-  //       alert("Something goes wrong.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("error");
-  //   }
-  // };
-
   const handlePreview = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (htmlContent) {
@@ -225,6 +176,10 @@ export default function Component() {
     } else {
       alert("Please convert a file to kindle format to view preview content.");
     }
+  };
+
+  const handleSimulatorClose = (isClosed: boolean) => {
+    setShowPreview(isClosed);
   };
 
   const handleMetadataChange = (metadata: Metadata) => {
@@ -382,7 +337,10 @@ export default function Component() {
                 </h4>
 
                 {showPreview && htmlContent && (
-                  <KindleSimulator htmlContent={htmlContent} />
+                  <KindleSimulator
+                    htmlContent={htmlContent}
+                    onClose={handleSimulatorClose}
+                  />
                 )}
               </div>
               <div className="text-sm text-gray-500 mb-4">
