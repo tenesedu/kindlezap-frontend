@@ -61,6 +61,7 @@ const carouselSlides = [
 
 export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentMetadataFormSlide, setCurrentMetadataFormSlide] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
   const [email, setEmail] = useState("");
 
@@ -78,6 +79,15 @@ export default function Component() {
   >([]);
 
   const [metadataForm, setMetadataForm] = useState<Metadata>();
+
+  const [forms, setForms] = useState<Array<Metadata>>([
+    {
+      title: "",
+      author: "",
+      genre: "",
+      language: "en",
+    },
+  ]);
 
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
@@ -195,12 +205,12 @@ export default function Component() {
     setShowPreview(isClosed);
   };
 
-  const handleMetadataChange = (metadata: Metadata) => {
-    if (metadata) {
-      console.log(metadata);
-      setMetadataForm(metadata);
-    }
-  };
+  // const handleMetadataChange = (metadata: Metadata) => {
+  //   if (metadata) {
+  //     console.log(metadata);
+  //     setMetadataForm(metadata);
+  //   }
+  // };
 
   return (
     <div>
@@ -352,9 +362,62 @@ export default function Component() {
                   />
                 )}
               </div>
-              <div className="text-sm text-gray-500 mb-4">
-                <MetadataForm onProcessMetadata={handleMetadataChange} />
-              </div>
+              {summaryContent ? (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div className="">
+                      <h5 className="font-medium text-gray-700">
+                        Form {currentMetadataFormSlide + 1} of {files.length}
+                      </h5>
+                      <p className="text-xs text-gray-400">
+                        {files[currentMetadataFormSlide]?.name}
+                      </p>
+                    </div>
+
+                    <div className="space-x-2">
+                      <Button
+                        className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+                        disabled={currentMetadataFormSlide === 0}
+                        onClick={() =>
+                          setCurrentMetadataFormSlide((prev) =>
+                            Math.max(0, prev - 1)
+                          )
+                        }
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+                        disabled={currentMetadataFormSlide === files.length}
+                        onClick={() =>
+                          setCurrentMetadataFormSlide((prev) =>
+                            Math.min(prev + 1, files.length - 1)
+                          )
+                        }
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+
+                  <MetadataForm
+                    formData={forms[currentMetadataFormSlide]}
+                    onProcessMetadata={(updatedMetadata) =>
+                      setForms((prevForms) =>
+                        prevForms.map((form, index) =>
+                          index === currentMetadataFormSlide
+                            ? updatedMetadata
+                            : form
+                        )
+                      )
+                    }
+                  />
+                </div>
+              ) : (
+                <p className="2xl:text-base xl:text-sm text-xs italic text-gray-500">
+                  Convert your files to add the metadata of the books here.
+                </p>
+              )}
 
               <div className="">
                 <h4 className="text-xl font-semibold text-gray-800 mb-4">
