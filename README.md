@@ -2,7 +2,7 @@
 
 KindleZap is a modern web application that simplifies the process of converting and sending PDFs to your Kindle device. With just a few clicks, transform any PDF into a Kindle-friendly format and deliver it directly to your device.
 
-Backedn repository: https://github.com/tenesedu/kindle-backend
+Backend repository: https://github.com/tenesedu/kindle-backend
 
 ## ⚠️ Educational Purposes Disclaimer
 
