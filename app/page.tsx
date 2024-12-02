@@ -32,6 +32,8 @@ import { Textarea } from "@/components/ui/textarea";
 import MetadataForm from "@/components/form/metadata";
 import { Metadata } from "@/app/interfaces";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const carouselSlides = [
   {
     title: "Revolutionize Your Reading",
@@ -129,7 +131,7 @@ export default function Component() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/summarize", {
+      const response = await fetch(`${apiUrl}/summarize`, {
         method: "POST",
         body: formData,
       });
@@ -175,7 +177,7 @@ export default function Component() {
 
     if (htmlContent) {
       try {
-        const response = await fetch("http://localhost:8000/send", {
+        const response = await fetch(`${apiUrl}/send`, {
           method: "POST",
           body: formData,
         });
@@ -218,13 +220,6 @@ export default function Component() {
   const handleSimulatorClose = (isClosed: boolean) => {
     setShowPreview(isClosed);
   };
-
-  // const handleMetadataChange = (metadata: Metadata) => {
-  //   if (metadata) {
-  //     console.log(metadata);
-  //     setMetadataForm(metadata);
-  //   }
-  // };
 
   return (
     <div>
@@ -487,9 +482,6 @@ export default function Component() {
                   </div>
                 )}
               </div>
-              {/* <div className="mt-4">
-                <KindleSimulator htmlContent={htmlContent || ""} />
-              </div> */}
             </div>
           </div>
         </div>
