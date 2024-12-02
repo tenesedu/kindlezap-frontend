@@ -97,4 +97,4 @@ By using or implementing this project, you acknowledge that you're doing so sole
 Eduardo Tenés - tenes.trillo.eduardo@gmail.com
 LinkedIn - (https://www.linkedin.com/in/eduardoten%C3%A9st/)
 
-Project Link: [https://github.com/yourusername/kindlezap-frontend](https://github.com/yourusername/kindlezap-frontend)
+Project Link: [https://github.com/tenesedu/kindlezap-frontend](https://github.com/yourusername/kindlezap-frontend)
