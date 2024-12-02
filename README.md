@@ -40,14 +40,14 @@ By using or implementing this project, you acknowledge that you're doing so sole
 ### Installation
 
 1. Clone the repository:
-  - git clone https://github.com/yourusername/kindlezap-frontend.git
+   - git clone https://github.com/yourusername/kindlezap-frontend.git
     
 2. Install dependencies:
-  - cd kindlezap-frontend
-  - npm install
-  - 
+   - cd kindlezap-frontend
+   - npm install
+    
 3. Create a `.env` file with your configuration:
-  - NEXT_PUBLIC_API_URL=http://localhost:8000
+   - NEXT_PUBLIC_API_URL=http://localhost:8000
 
 4. Start the development server:
    - npm run dev
