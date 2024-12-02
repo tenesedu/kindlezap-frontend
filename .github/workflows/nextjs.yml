@@ -54,6 +54,8 @@ jobs:
           path: ./out
 
   deploy:
+    env:
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
