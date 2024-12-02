@@ -20,18 +20,16 @@ const MetadataForm = ({
   ) => {
     const { id, value } = event.target;
 
-    // Crear un nuevo objeto con los datos actualizados
-    const updatedMetadata = {
-      ...formData, // Copia los datos actuales del formulario
-      [id]: value, // Actualiza el campo modificado
+    const updatedMetadata: Metadata = {
+      ...formData,
+      [id]: value,
     };
 
-    // Llama al callback para notificar al componente padre
     onProcessMetadata(updatedMetadata);
   };
 
   return (
-    <form className="p-4 mx-auto">
+    <form className="p-4 mx-auto" onSubmit={(e) => e.preventDefault()}>
       <div className="mb-4 flex flex-col lg:flex-row gap-6">
         <div className="items-center gap-2">
           <label

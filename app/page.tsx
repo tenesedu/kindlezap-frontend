@@ -105,6 +105,15 @@ export default function Component() {
     if (event.target.files && event.target.files[0]) {
       const fileArray = Array.from(event.target.files);
       setFiles([...files, ...fileArray]);
+
+      const newForms = fileArray.map(() => ({
+        title: "",
+        author: "",
+        genre: "",
+        language: "en",
+      }));
+
+      setForms((prevForms) => [...prevForms, ...newForms]);
     }
   };
 
@@ -145,8 +154,8 @@ export default function Component() {
   const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    if (!files || !email) {
-      alert("Please provide both a file and an email.");
+    if (!files.length || !email) {
+      alert("Please provide both files and an email.");
       return;
     }
 
@@ -155,8 +164,14 @@ export default function Component() {
 
     const formData = new FormData();
     formData.append("email", email);
-    // formData.append("file", file);
-    formData.append("metadata", JSON.stringify(metadataForm));
+
+    // Append all files
+    files.forEach((file, index) => {
+      formData.append("files", file);
+    });
+
+    // Append all metadata forms
+    formData.append("metadata", JSON.stringify(forms));
 
     if (htmlContent) {
       try {
@@ -167,18 +182,17 @@ export default function Component() {
 
         if (response.ok) {
           setResponseState("success");
-          setMessage("Book sent successfully!");
+          setMessage("Books sent successfully!");
 
           setTimeout(() => {
             setResponseState(null);
           }, 3000);
-        } else if (response.status === 500) {
+        } else {
           setResponseState("error");
-          setMessage("Failed to send your book");
+          setMessage("Failed to send your books");
           setTimeout(() => {
             setResponseState(null);
           }, 3000);
-        } else {
         }
       } catch (error) {
         console.error("Error:", error);
@@ -270,6 +284,10 @@ export default function Component() {
                                 (_, i) => i !== index
                               );
                               setFiles(newFiles);
+                              const newForms = forms.filter(
+                                (_, i) => i !== index
+                              );
+                              setForms(newForms);
                             }}
                             className="ml-2 text-gray-500 hover:text-gray-700"
                           >
