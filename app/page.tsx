@@ -130,6 +130,9 @@ export default function Component() {
       formData.append("file", file);
     }
 
+    setResponseState("loading");
+    setMessage("converting file/s...");
+
     try {
       const response = await fetch(`${apiUrl}/summarize`, {
         method: "POST",
@@ -137,6 +140,13 @@ export default function Component() {
       });
 
       if (response.ok) {
+        setResponseState("success");
+        setMessage("Books converted successfully!");
+
+        setTimeout(() => {
+          setResponseState(null);
+        }, 2000);
+
         const data = await response.json();
         console.log(data.summary.summary);
 
@@ -146,6 +156,12 @@ export default function Component() {
         setSummaryContent(true);
       } else {
         alert("Error converting files. Please try again.");
+        setResponseState("error");
+        setMessage("Error converting files");
+
+        setTimeout(() => {
+          setResponseState(null);
+        }, 2000);
       }
     } catch (error) {
       console.error("Error:", error);
