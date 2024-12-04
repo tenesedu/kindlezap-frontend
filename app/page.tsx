@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import MetadataForm from "@/components/form/metadata";
 import { Metadata } from "@/app/interfaces";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://kindle-backend-latest.onrender.com";
+const apiUrl = "https://kindle-backend.fly.dev";
 
 const carouselSlides = [
   {
